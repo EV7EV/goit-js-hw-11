@@ -3,6 +3,7 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { fetchUrl } from './js/api/fetchImages';
+import { scroll } from './js/scroll/scroll';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
@@ -40,31 +41,30 @@ async function onSubmit(ev) {
       loadMore.style.display = 'block';
     }
   }
-
-  console.log(response);
 }
 
 function renderImages(images) {
   const markUp = images.map(image => {
     return `<div class="photo-card">
- <a href="${image.largeImageURL}"> <img class="photo-card__img" src="${image.webformatURL}" alt="${image.tags}" loading="lazy" width="320" height="212" /></a>
+ <a href="${image.largeImageURL}"> <img class="photo-card__img" src="${image.webformatURL}" alt="${image.tags}" loading="lazy"  /></a>
   <div class="info">
     <p class="info-item">
-      <b>Likes:${image.likes}</b>
+      <b>Likes: ${image.likes}</b>
     </p>
     <p class="info-item">
-      <b>Views:${image.views}</b>
+      <b>Views: ${image.views}</b>
     </p>
     <p class="info-item">
-      <b>Comments:${image.comments}</b>
+      <b>Comments: ${image.comments}</b>
     </p>
     <p class="info-item">
-      <b>Downloads:${image.downloads}</b>
+      <b>Downloads: ${image.downloads}</b>
     </p>
   </div>
 </div>`;
   });
-  gallery.innerHTML += markUp;
+  const fixMArkUP = markUp.join('');
+  gallery.innerHTML += fixMArkUP;
 }
 
 async function onClick() {
@@ -74,10 +74,12 @@ async function onClick() {
   renderImages(response.hits);
   if (response.totalHits === response.hits.length) {
     loadMore.style.display = 'none';
+
     Notify.failure(
       "We're sorry, but you've reached the end of search results."
     );
   }
+  scroll();
 }
 
 function refreshGallery() {
